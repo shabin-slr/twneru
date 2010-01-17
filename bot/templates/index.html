@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>寝 -Neru-</title>
+	<link rel="stylesheet" href="/css/neru.css" type="text/css" media="screen,tv,print" />
+	<meta http-equiv="Content-Script-Type" content="text/javascript" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<script type="text/javascript" src="/js/neruui.js"></script>
+
+	<style type="text/css">
+#splash-box {
+	margin: 1em auto -33px auto;
+	width: 530px;
+	height: 384px;
+	padding: 0;
+	position: relative;
+	background: url(/images/neruv2.gif) top left no-repeat;
+}
+
+#splash-box form {
+	position: absolute;
+	top: 66px;
+	right: 40px;
+	background: #eee;
+	border: 1px solid #aaa;
+	font-size: 16px;
+	padding: 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+}
+
+#splash-box input {
+	font-size: 17px;
+}
+
+p.version {
+	margin: 0;
+	padding: 0 100px 0 0;
+	color: #999;
+	font-size: 19px;
+	font-weight: bold;
+	letter-spacing: 6px;
+}
+
+#nickbox {
+	color: #000;
+	background: #fff none center center no-repeat;
+}
+	</style>
+</head>
+<body class="front" onload="void(launch())">
+	<div class="unav"><a href="/dashboard">Dashboard</a> | <a href="/static/help.html">ヘルプ</a></div>
+
+	<div id="splash-box">
+		<form action="/statuses" method="get">
+			<input type="text" size="19" name="nick" id="nickbox" /> の「ねる」を <input type="submit" value="表示" />
+		</form>
+	</div>
+	<p class="version">Version 2.0</p>
+</body>
+</html>

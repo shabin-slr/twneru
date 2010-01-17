@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+
+	<title>Dashboard - Neru</title>
+	<link rel="stylesheet" href="/css/neru.css" type="text/css" media="screen,tv,print" />
+	<meta http-equiv="Content-Script-Type" content="text/javascript" />
+</head>
+<body class="dsbd">
+	<h1><a href="/"><img alt="ねる。" src="./images/nerulogo.png" /></a></h1>
+	<div class="unav"><a href="/static/help.html">ヘルプ</a></div>
+
+	<h2>Dashboard</h2>
+	<h3>User Activities</h3>
+	<h4>最近の「ねる」</h4>
+		<ul class="recents withbadges">{{sleeps_html}}</ul><br style="clear:both" class="tail" />
+	<h4>最近の「おきた」</h4>
+		<ul class="recents withbadges">{{wakes_html}}</ul><br style="clear:both" class="tail" />
+{% if short_list %}
+	<h4>よく利用しているユーザー &nbsp; <a href="/users">すべて表示&raquo;</a></h4>
+		<ul class="recents">{{short_list}}</ul><br style="clear:both" class="tail" />
+{% endif %}
+	<h3>System Status</h3>
+{% if not stat_rel_time %}
+<p>処理結果のデータがありません</p>
+{% else %}
+	<table>
+		<tbody>
+			<tr>
+				<td colspan="2" class="timedisp">前回のタイムライン取得: {{stat_rel_time}}秒前</td>
+            </tr>
+			<tr><td class="stat{{error_class}}">{{error_label}}</td><td>
+{%  if not error_message %}
+全ての処理が完了しました ({{stat_elapsed_time}}秒)
+{%  else %}
+{{error_message}}
+{%  endif %}
+</td></tr>
+		</tbody>
+	</table>
+{% endif %}
+</body>
+</html>
