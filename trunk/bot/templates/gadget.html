@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>{{nick|escape}}'s ねるgadget</title>
+
+<style type="text/css">
+body {
+	margin: 0;
+	padding: 0;
+	background: url(images/lcdbase.png) top left no-repeat;
+	overflow: hidden;
+}
+
+p {
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+
+img {
+	display: inline;
+	background: url(images/lcdsprite.gif) no-repeat 0px 0px;
+}
+
+#day {
+	position: absolute;
+	left: 6px;
+	top: 8px; 
+}
+
+#s-time {
+	position: absolute;
+	left: 7px;
+	top: 37px; 
+}
+
+#w-time {
+	min-width: 60px;
+	position: absolute;
+	left: 71px;
+	top: 37px; 
+}
+
+#e-time {
+	min-width: 32px;
+	position: absolute;
+	left: 123px;
+	top: 37px; 
+}
+
+.s0 {background-position:   0px 0px;}
+.s1 {background-position: -12px 0px;}
+.s2 {background-position: -24px 0px;}
+.s3 {background-position: -36px 0px;}
+.s4 {background-position: -48px 0px;}
+.s5 {background-position: -60px 0px;}
+.s6 {background-position: -72px 0px;}
+.s7 {background-position: -84px 0px;}
+.s8 {background-position: -96px 0px;}
+.s9 {background-position: -108px 0px;}
+.sn {background-position: -120px 0px;}
+
+.n0 {background-position: -132px 0px; position:relative; left:1px;}
+.n1 {background-position: -144px 0px; position:relative; left:1px;}
+
+.m0 {background-position:   0px -12px;}
+.m1 {background-position:  -8px -12px;}
+.m2 {background-position: -16px -12px;}
+.m3 {background-position: -24px -12px;}
+.m4 {background-position: -32px -12px;}
+.m5 {background-position: -40px -12px;}
+.m6 {background-position: -48px -12px;}
+.m7 {background-position: -56px -12px;}
+.m8 {background-position: -64px -12px;}
+.m9 {background-position: -72px -12px;}
+.mn {background-position: -80px -12px;}
+
+.minutes10 {
+	display: inline;
+	margin-left: 3px;
+}
+
+.dec {
+	display: inline;
+	margin-left: 3px;
+}
+
+.text {
+	display: none;
+}
+
+#neru-gadget-frame {
+	min-width: 160px;
+	margin: 0;
+	padding: 0;
+}
+
+#nerulink {
+	display: block;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 159;
+	height: 65;
+}
+
+#nerulink img{
+	background: none;
+	border: none;
+}
+
+</style>
+
+</head>
+<body>
+	<div id="neru-gadget-frame">
+		<p id="day"   ><img src="images/dmy.gif" width="12" height="12" class="s{{day10}}" alt="{{day10}}" /><img src="images/dmy.gif" width="12" height="12" class="s{{day1}}" alt="{{day1}}" /><span class="text">日の睡眠時間</span></p>
+		<p id="s-time"><img src="images/dmy.gif" width="12" height="12" class="s{{slp1000}}" alt="{{slp1000}}" /><img src="images/dmy.gif" width="12" height="12" class="s{{slp100}}" alt="{{slp100}}" /><img src="images/dmy.gif" width="12" height="12" class="s{{slp10}} minutes10" alt="{{slp10}}" /><img src="images/dmy.gif" width="12" height="12" class="s{{slp1}}" alt="{{slp1}}" /><span class="text">から</span></p>
+		<p id="w-time"><img src="images/dmy.gif" width="12" height="12" class="s{{wk1000}}" alt="{{wk1000}}" /><img src="images/dmy.gif" width="12" height="12" class="s{{wk100}}" alt="{{wk100}}" /><img src="images/dmy.gif" width="12" height="12" class="s{{wk10}} minutes10" alt="{{wk10}}" /><img src="images/dmy.gif" width="12" height="12" class="s{{wk1}}" alt="{{wk1}}" /><span class="text">まで</span></p>
+		<p id="e-time"><img src="images/dmy.gif" width="12" height="12" class="n{{et100}}" alt="{{et100}}" /><img src="images/dmy.gif" width="12" height="12" class="s{{et10}}" alt="{{et10}}" /><img src="images/dmy.gif" width="8" height="12" class="m{{et1}}" alt="{{et1}}" class="dec" /><span class="text">時間</span></p>
+		<a target="_top" id="nerulink" href="/statuses?nick={{nick|escape}}"><img src="images/dmy.gif" width="159" height="65" alt="see statuses" /></a>
+	</div>
+</body>
+</html>

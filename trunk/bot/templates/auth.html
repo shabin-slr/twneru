@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Setup OAuth</title>
+	<style type="text/css">
+ul {
+	font-size: 300%;
+}
+	</style>
+</head>
+<body>
+{% if require_vkey %}
+ <p><a href="{{vkey_url}}">Get Verifier</a></p>
+ <form method="post" action="./auth">
+Verifier: <input type="text" name="vkey" /><input type="submit" />
+  <input type="hidden" name="key" value="{{key}}" /><input type="hidden" name="secret" value="{{secret}}" />
+ </form>
+{% else %}
+{%  if access_ok%}
+<h1>OK</h1>
+<p>This bot will access as <em>{{nick|escape}}</em></p>
+<ul>
+<li>Key: {{key}}</li>
+<li>Secret: {{secret}}</li>
+</ul>
+{%  else %}
+<h1>Denied</h1>
+{%  endif %}
+{% endif %}
+</body>
+</html>

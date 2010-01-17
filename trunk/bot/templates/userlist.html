@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>ユーザリスト - Neru</title>
+	<link rel="stylesheet" href="css/neru.css?v=7" type="text/css" media="screen,tv,print" />
+	<meta http-equiv="Content-Script-Type" content="text/javascript" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<script type="text/javascript" src="/js/chart.js"></script>
+</head>
+<body>
+	<h1><a href="/"><img alt="ねる。" src="./images/nerulogo.png" /></a></h1>
+	<div class="unav"><a href="/dashboard">Dashboard</a> | <a href="/static/hrlp.html">ヘルプ</a></div>
+	<h2>ユーザー一覧</h2>
+<div>
+ランキング: <ul class="sort-type">{{typesel}}</ul>
+</div>
+    <ol class="userlist{{addclass}}">
+{{ualist}}
+    </ol>
+</body>
+</html>

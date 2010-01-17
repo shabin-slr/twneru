@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>{{nick|escape}} - Neru</title>
+	<link rel="stylesheet" href="css/neru.css?v=9" type="text/css" media="screen,tv,print" />
+	<meta http-equiv="Content-Script-Type" content="text/javascript" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+
+	<script type="text/javascript">
+{{ chart_js }}
+	</script>
+	<script type="text/javascript" src="/js/chart.js"></script>
+</head>
+<body onload="void(launch())">
+	<h1><a href="/"><img alt="ねる。" src="./images/nerulogo.png" /></a></h1>
+	<div class="unav"><a href="/dashboard">Dashboard</a> | <a href="/static/help.html">ヘルプ</a></div>
+<!--
+	<h2><a href="http://twitter.com/{{nick|escape}}">{{nick|escape}}</a> の「ねる」<span class="title-sub">{{gendate}} JST 生成 ({{et}}秒)</span></h2>
+-->
+	<table class="user-info">
+		<tr class="hrow">
+			<th>プロフィール</th>
+			<th>統計情報</th>
+		</tr>
+		<tr>
+			<td class="profcol"><a href="http://twitter.com/{{nick|escape}}"><img src="{{user_icon}}" alt="{{nick|escape}}" /><br />{{nick|escape}}</a></td>
+			<td class="statcol">
+<h3>{{ stat_org }}～1週間の統計情報 (7日中{{ stat_avails }}日 データあり)</h3>
+<dl>
+	<dt>平均睡眠時間</dt>
+	<dd>{{stat_avr}} 時間</dd>
+	<dt>廃人ポイント</dt>
+	<dd>{{stat_bscore}} <a href="/users?sort=b"><img alt="廃人ランキング" title="廃人ランキング" src="/images/rks.gif" /></a></dd>
+</dl>
+			</td>
+		</tr>
+	</table>
+
+	<p class="pager">{{pager_html}}</p>
+	<p class="settings">地域: {{ loc_label }} / 15時から翌日の12時（36時）までが一日として記録されます</p>
+
+	<table cellspacing="1" id="main-tbl">
+		<thead>
+			<tr class="monh">
+{{ mon_heads }}
+			</tr>
+			<tr>
+{{ headings }}
+			</tr>
+			<tr id="dmy-row"><th colspan="30"><span id="dmy-anc"></span></th></tr>
+		</thead>
+		<tbody>
+			<tr class="chart">
+{{ cols }}
+			</tr>
+			<tr class="wake_day">
+{{ wake_headings }}
+			</tr>
+		</tbody>
+	</table>
+{% if demo %}
+	<div id="instructions">
+		<div id="instructions-popup">
+			<h3>「ねる」は、Twitterから投稿するだけで<br />睡眠時間を管理できるサービスです</h3>
+			<ul>
+				<li><a href="/static/help.html"><img alt="?" src="/images/li-help.png" /></a><a href="/static/help.html">使い方を見る</a></li>
+				<li id="close-instructions"><a href="/statuses?nick={{nick|escape}}"><img alt="X" src="/images/li-close.png" /></a><a href="/statuses?nick={{nick|escape}}">この表示を消す</a></li>
+			</ul>
+		</div>
+	</div>
+{% endif %}
+
+	<ul class="legend">
+		<li><img alt="sleep-pin"  src="images/pin.gif" />:就寝時間</li>
+		<li><img alt="wake-pin"  src="images/pin2.gif" />:起床時間</li>
+		<li><a href="/get_gadget?nick={{nick|escape}}">ねるgadgetを取得</a></li>
+	</ul>
+</body>
+</html>

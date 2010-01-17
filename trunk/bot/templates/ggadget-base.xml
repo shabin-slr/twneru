@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<Module>
+  <ModulePrefs title="{{nick|escape}}'s neru" height="68" thumbnail="http://twneru.appspot.com/images/gsample.png" />
+  <Content type="html">
+    <![CDATA[
+<center><iframe title="{{nick|escape}}'s neru" frameborder="0" height="67" width="160" style="padding: 0; border: none;" src="http://twneru.appspot.com/gadget?nick={{nick|escape}}"><a href="http://twneru.appspot.com/statuses?nick={{nick|escape}}">{{nick|escape}}'s neru</a></iframe></center>
+    ]]> 
+  </Content> 
+</Module>
