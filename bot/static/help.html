@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>使いかた - Neru</title>
+	<link rel="stylesheet" href="/css/neru.css" type="text/css" media="screen,tv,print" />
+	<meta http-equiv="Content-Script-Type" content="text/javascript" />
+</head>
+<body class="help">
+	<div class="unav"><a href="/dashboard">Dashboard</a></div>
+	<h1><a href="/"><img alt="ねる。" src="/images/nerulogo.png" /></a></h1>
+	<h2>使いかた</h2>
+	<p><img src="/images/z_1.png" alt="reply to @twneru" align="left" />寝る前に、Twitter で @twneru に「ねる」や「寝る」などと Reply すると、その時刻が就寝時刻として記録されます。記録された就寝時刻はグラフで見ることができます。同様に「起きた」で起床時刻も記録できます。<br /><em><a href="http://twneru.appspot.com/statuses?nick=gyuque">グラフのサンプル</a></em><br/></p>
+	<br clear="all" />
+	<p><img src="/images/z_2.png" alt="reply to @twneru" align="left" />グラフ上には、就寝時刻と起床時刻の折れ線と、睡眠時間のバーが表示されます（就寝時刻と起床時刻が両方記録されている場合のみ）。また、グラフの背景には日没・日出の時刻が絵で表示されます。</p>
+	<br clear="all" />
+<h3>コマンド一覧</h3>
+<dl>
+
+<dt>就寝時刻記録</dt>
+<dd>
+<em>@twneru 寝る</em><br />
+発言した時刻が就寝時刻として記録されます。
+</dd>
+
+<dt>起床時刻記録</dt>
+<dd>
+<em>@twneru 起きた</em><br />
+発言した時刻が起床時刻として記録されます。
+</dd>
+
+<dt>「寝る」予約</dt>
+<dd>
+<em>@twneru 5分後に寝る</em><br />
+発言した時刻より指定した時間後が就寝時刻として記録されます。
+</dd>
+
+<dt>時間指定「起きた」</dt>
+<dd>
+<em>@twneru 9:30に起きた</em><br />
+発言した日の指定した時刻が起床時刻として記録されます。
+</dd>
+
+<dt>あとから記録・修正</dt>
+<dd>
+<em>@twneru 20日は9:30に起きた</em><br />
+<em>@twneru 19日は25:30に寝た</em><br />
+前日までの就寝時刻や起床時刻をあとから記録、修正します。20日前まで設定できます。<br />
+* 発言した日が5月2日の場合、「1日」は5月1日、「30日」は4月30日として扱われます。<br />
+* 就寝時刻は36時まで指定できます（5月2日の明け方4時に寝た場合は、「1日の28:00」として記録してください）
+</dd>
+
+<dt>地域設定</dt>
+<dd>
+<em>@twneru 地域を東京に設定</em><br />
+グラフ背景の日の出・日の入り時刻を調節できます。<br />
+設定できる地域: 札幌、東京、さいたま、長野、名古屋、大阪、松江、福岡
+</dd>
+</dl>
+
+<h3>Credits</h3>
+<ul class="credits">
+<li><a href="http://twitter.com/Topia">@Topia</a></li>
+<li><a href="http://twitter.com/mushline">@mushline</a></li>
+<li><a href="http://twitter.com/gyuque">@gyuque</a></li>
+</ul>
+
+<h4>oauth.py</h4>
+<pre>
+The MIT License
+
+Copyright (c) 2007 Leah Culver
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+</pre>
+
+<h4>prototype.js</h4>
+<pre>Prototype is Copyright (c) 2005-2007 Sam Stephenson. It is freely distributable
+under the terms of an MIT-style license.
+
+Copyright (c) 2005-2007 Sam Stephenson
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this 
+software and associated documentation files (the “Software”), to deal in the Software 
+without restriction, including without limitation the rights to use, copy, modify, merge, 
+publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+The Prototype documentation is Copyright (c) 2007 The Prototype Core Team. It is released under 
+the Creative Commons Attribution-ShareAlike 3.0 license.
+</pre>
+
+</body>
+</html>

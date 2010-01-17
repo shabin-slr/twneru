@@ -1,0 +1,25 @@
+application: twneru
+version: 10
+runtime: python
+api_version: 1
+
+handlers:
+- url: /static
+  static_dir: static
+
+- url: /css
+  static_dir: css
+
+- url: /images
+  static_dir: images
+  expiration: "4h"
+
+- url: /js
+  static_dir: js
+
+- url: /favicon\.ico
+  static_files: images/favicon.ico
+  upload: images/favicon.ico
+
+- url: /.*
+  script: twitterbot.py

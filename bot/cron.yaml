@@ -1,0 +1,4 @@
+cron:  
+- description: check replies
+  url: /observe?_pass=[Replace with InternalPass specified in botconfig.py]
+  schedule: every 2 minutes
