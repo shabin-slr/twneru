@@ -12,7 +12,8 @@ ul {
 </head>
 <body>
 {% if require_vkey %}
- <p><a href="{{vkey_url}}">Get Verifier</a></p>
+ <p><a href="{{logout_url}}">logout</a></p>
+ <p><a href="{{vkey_url}}" target="_blank">Get Verifier</a></p>
  <form method="post" action="./auth">
 Verifier: <input type="text" name="vkey" /><input type="submit" />
   <input type="hidden" name="key" value="{{key}}" /><input type="hidden" name="secret" value="{{secret}}" />
