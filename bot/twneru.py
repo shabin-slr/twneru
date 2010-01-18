@@ -348,6 +348,8 @@ class FilteredTweetList(object):
 
     try:
       # 寝た or 起きた
+      # todo: a,b,c = fun()
+      # todo: use topia dict
       tres = topia.ParseTwneruText.parse(t.text)
 
       t.user_data['specified_date'] = tres[0]
@@ -375,6 +377,10 @@ class BScoreUpdater(object):
   @classmethod
   def calc(cls):
     import time
+    if memcache.get('bscore_cache_valid'):
+      print >>sys.stderr, "BScoreUpdater aborted"
+      return
+    memcache.set('bscore_cache_valid', True, 900)
 
     sa = twnmodels.SleepTime.all()
     wa = twnmodels.WakeTime.all()
@@ -390,8 +396,8 @@ class BScoreUpdater(object):
     sa.order('-day_id').filter('day_id >=', dayid)
     wa.order('-day_id').filter('day_id >=', dayid)
 
-    slist = sa.fetch(limit = 1000)
-    wlist = wa.fetch(limit = 1000)
+    slist = sa.fetch(limit = 500)
+    wlist = wa.fetch(limit = 500)
 
     umap = {}
 

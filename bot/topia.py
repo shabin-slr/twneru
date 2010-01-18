@@ -49,7 +49,9 @@ class ParseTwneruText(object):
 
     @classmethod
     def parse(cls, text):
-        text = cls.preprocess_rels(text)
+        import jtrans
+
+        text = cls.preprocess_rels(jtrans.to_han(text))
         match = cls.verb.search(text)
         if not match:
             raise ValueError('parse error')
