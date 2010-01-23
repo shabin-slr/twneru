@@ -25,7 +25,7 @@
 {% endif %}
 	<h3>System Status</h3>
 {% if not stat_rel_time %}
-<p>処理結果のデータがありません</p>
+<p>処理結果のデータはありません</p>
 {% else %}
 	<table>
 		<tbody>
@@ -42,5 +42,12 @@
 		</tbody>
 	</table>
 {% endif %}
+
+{% if memcache_size %}
+<p class="sys-stat">
+<em>memcacheサイズ:</em> {{ memcache_size }} bytes
+</p>
+{% endif %}
+
 </body>
 </html>
