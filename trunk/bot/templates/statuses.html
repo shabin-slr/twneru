@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>{{nick|escape}} - Neru</title>
-	<link rel="stylesheet" href="css/neru.css?v=9" type="text/css" media="screen,tv,print" />
+	<link rel="stylesheet" href="css/neru.css?v=12" type="text/css" media="screen,tv,print" />
 	<meta http-equiv="Content-Script-Type" content="text/javascript" />
 	<meta http-equiv="Content-Style-Type" content="text/css" />
 
@@ -16,17 +16,19 @@
 <body onload="void(launch())">
 	<h1><a href="/"><img alt="ねる。" src="./images/nerulogo.png" /></a></h1>
 	<div class="unav"><a href="/dashboard">Dashboard</a> | <a href="/static/help.html">ヘルプ</a></div>
-<!--
-	<h2><a href="http://twitter.com/{{nick|escape}}">{{nick|escape}}</a> の「ねる」<span class="title-sub">{{gendate}} JST 生成 ({{et}}秒)</span></h2>
--->
-	<table class="user-info">
-		<tr class="hrow">
-			<th>プロフィール</th>
-			<th>統計情報</th>
-		</tr>
-		<tr>
-			<td class="profcol"><a href="http://twitter.com/{{nick|escape}}"><img src="{{user_icon}}" alt="{{nick|escape}}" /><br />{{nick|escape}}</a></td>
-			<td class="statcol">
+
+	<div id="caption-area">
+{% if client_natsulion %}
+		<span id="clienticon"><img alt="NatsuLion" title="from NatsuLion" src="/images/lion.gif" /></span>
+{% endif %}
+		<table class="user-info">
+			<tr class="hrow">
+				<th>プロフィール</th>
+				<th>統計情報</th>
+			</tr>
+			<tr>
+				<td class="profcol"><a href="http://twitter.com/{{nick|escape}}"><img src="{{user_icon}}" alt="{{nick|escape}}" /><br />{{nick|escape}}</a></td>
+				<td class="statcol">
 <h3>{{ stat_org }}～1週間の統計情報 (7日中{{ stat_avails }}日 データあり)</h3>
 <dl>
 	<dt>平均睡眠時間</dt>
@@ -34,9 +36,10 @@
 	<dt>廃人ポイント</dt>
 	<dd>{{stat_bscore}} <a href="/users?sort=b"><img alt="廃人ランキング" title="廃人ランキング" src="/images/rks.gif" /></a></dd>
 </dl>
-			</td>
-		</tr>
-	</table>
+				</td>
+			</tr>
+		</table>
+	</div>
 
 	<p class="pager">{{pager_html}}</p>
 	<p class="settings">地域: {{ loc_label }} / 15時から翌日の12時（36時）までが一日として記録されます</p>
