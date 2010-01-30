@@ -37,6 +37,7 @@ REPLY_ERR_DATE  = 5
 REPLY_ERR_TIME  = 6
 REPLY_FWD_TIME  = 8
 REPLY_SET_LOCATION = 7
+REPLY_ERR_OTHER  = 99
 
 def register_custom_servlets(list):
   list.append( ('/',              TopPage) )
@@ -49,6 +50,8 @@ def register_custom_servlets(list):
 
 def process_icon_map(imap):
   from google.appengine.ext import db
+  cmap = memcache.get('user_client_map')
+  memcache.set('user_client_map', None)
 
   names = imap.keys()
   if len(names) < 1:
@@ -62,16 +65,30 @@ def process_icon_map(imap):
 
   # existing users
   for u in users:
+    client = None
+    found_cmap = False
+
+    if cmap and (u.username in cmap):
+      found_cmap = True
+      client = cmap[u.username]
+
     foundmap[u.username] = True
-    if imap[u.username] != u.icon:
-      u.icon = imap[u.username]
+    if imap[u.username] != u.icon or (client != u.client and found_cmap):
+      u.icon   = imap[u.username]
+      u.client = client
       u.put()
       print >>sys.stderr, "updated icon for %s" % u.username
+      if client:
+        print >>sys.stderr, "%s is using NatsuLion" % u.username
 
   # new users
   for i in imap:
     if not i in foundmap:
-      u = twnmodels.TwitterUser(username = i, icon = imap[i])
+      client = None
+      if cmap and (i in cmap):
+        client = cmap[i]
+
+      u = twnmodels.TwitterUser(username = i, icon = imap[i], client = client)
       u.put()
       print >>sys.stderr, "created user and set icon for %s" % u.username
 
@@ -82,6 +99,31 @@ def jst_datetime():
 
   return time.strftime('%Y-%m-%d %H:%M', time.gmtime(t))
 
+def fixed_page_name(req):
+   if not req.cookies:
+     return None
+
+   if not 'fixedpage' in req.cookies:
+     return None
+
+   c = req.cookies['fixedpage']
+   if not c:
+     return None
+
+   if len(c) < 1:
+     return None
+
+   return c
+
+def make_fixed_link(req):
+  import cgi
+  f = fixed_page_name(req)
+  if not f:
+    return ''
+
+  f = cgi.escape(f)
+  return u"<a href=\"/statuses?nick=%s\" id=\"fixed-page-navigation\">%sの「ねる」</a> | " % (f,f)
+
 class TwitterBotImpl(object):
   max_id = 0
 
@@ -89,10 +131,11 @@ class TwitterBotImpl(object):
     return self.max_id
 
   def process_replies(self, tweets, service):
+    client_map = {}
     new_tweets = tweets.newer()
     flist = FilteredTweetList()
     for t in new_tweets:
-      flist.check(t)
+      flist.check(t, client_map)
       if int(t.id) > self.max_id:
         self.max_id = int(t.id)
 
@@ -105,6 +148,8 @@ class TwitterBotImpl(object):
 
     service.append_update_icon_task()
     service.append_call_task("update_b_ranking")
+
+    memcache.set('user_client_map', client_map)
     return
 
   def remove_same_user(self, tweets):
@@ -174,6 +219,8 @@ class TwitterBotImpl(object):
         service.append_tweet(u"@%s 時刻指定がおかしいです" % t.nick)
       elif reply_type == REPLY_FWD_TIME:
         service.append_tweet(u"@%s 時刻指定がおかしいです(未来の時刻を指定していませんか?)" % t.nick)
+      elif reply_type == REPLY_ERR_OTHER:
+        service.append_tweet(u"@%s 記録時にエラーが発生しました" % t.nick)
       elif reply_type == REPLY_SET_LOCATION:
         lid = twncalendar.get_location_id(t.user_data['specified_location'])
         twnmodels.TwitterUser.set_location(t.nick, lid)
@@ -196,7 +243,11 @@ class TwitterBotImpl(object):
 
     if mode == MODE_SLEEP:
       if spec_date:
-        t.user_data['reply_type'] = self.modify_sleep_time(t.nick, spec_date, spec_time[0], spec_time[1], t.user_data)
+        try:
+          t.user_data['reply_type'] = self.modify_sleep_time(t.nick, spec_date, spec_time[0], spec_time[1], t.user_data)
+        except:
+          print >>sys.stderr, '%s <- exception' % t.nick
+          t.user_data['reply_type'] = REPLY_ERR_OTHER
         return
 
       delay = 0
@@ -342,7 +393,7 @@ class FilteredTweetList(object):
     t.user_data['specified_location'] = locname
     self.ls_commands.append(t)
 
-  def check(self, t):
+  def check(self, t, cmap):
     import re
     loc_cmd_re = re.compile(u'^ *@[_a-z]+ +[地域場所]+[をは](さいたま|[埼玉関西東京大阪長野名古屋福岡中部愛知松江島根札幌北海道九州]+)')
 
@@ -351,6 +402,7 @@ class FilteredTweetList(object):
       # todo: a,b,c = fun()
       # todo: use topia dict
       tres = topia.ParseTwneruText.parse(t.text)
+      GadgetPage.clear_gadget_cache(t.nick)
 
       t.user_data['specified_date'] = tres[0]
       t.user_data['specified_time'] = tres[1]
@@ -358,7 +410,9 @@ class FilteredTweetList(object):
         self.ls_sleeps.append(t)
       else:
         self.ls_wakes.append(t)
-
+      
+      if t.client > 0:
+        cmap[t.nick] = t.client
     except ValueError, e:
       # 地域設定 or 無効発言
       rxr = loc_cmd_re.search(t.text)
@@ -380,7 +434,7 @@ class BScoreUpdater(object):
     if memcache.get('bscore_cache_valid'):
       print >>sys.stderr, "BScoreUpdater aborted"
       return
-    memcache.set('bscore_cache_valid', True, 900)
+    memcache.set('bscore_cache_valid', True, 1100)
 
     sa = twnmodels.SleepTime.all()
     wa = twnmodels.WakeTime.all()
@@ -396,8 +450,8 @@ class BScoreUpdater(object):
     sa.order('-day_id').filter('day_id >=', dayid)
     wa.order('-day_id').filter('day_id >=', dayid)
 
-    slist = sa.fetch(limit = 500)
-    wlist = wa.fetch(limit = 500)
+    slist = sa.fetch(limit = 800)
+    wlist = wa.fetch(limit = 800)
 
     umap = {}
 
@@ -409,7 +463,6 @@ class BScoreUpdater(object):
 
     for wt in wlist:
       if wt.day_id and not (cls.make_day_and_user_key(wt.day_id, wt.username) in st_dmap): # Sleep time is missing. Assume 6 hours sleep
-        print >>sys.stderr, str(wt.day_id)
         dmy_h = wt.hour + 18
         slist.append(DummyTime(wt.username, dmy_h))
 
@@ -438,9 +491,15 @@ class BScoreUpdater(object):
 
       umap[wt.username] += cls.calc_wt_score( wt.hour )
 
-    for score in umap:
-      twnmodels.TwitterUser.set_bscore(score, umap[score], t)
+    uall = twnmodels.TwitterUser.all().order("-s_timestamp")
+    prefetch_map = {}
+    for uobj in uall:
+      prefetch_map[uobj.username] = uobj
 
+    for score in umap:
+      twnmodels.TwitterUser.set_bscore(score, umap[score], t, prefetch_map)
+
+    print >>sys.stderr, "updated bscore"
     memcache.set("rank_timestamp", value=int(t))
 
   @classmethod
@@ -493,14 +552,22 @@ class UserListPage(hbase.PageBase):
 
   @classmethod
   def make_user_list(cls):
+    cached_list = memcache.get("sorted_userlist_cache")
+    if cached_list:
+      return cached_list
+
+    import time
+    t = time.time() +32400 - (86400*7)
+    dayid = twnmodels.tw_day_id(time.gmtime(t), False)
+
     q_susers = twnmodels.SleepTime.all()
-    q_susers.order('-day_id')
+    q_susers.filter("day_id >= ", dayid).order('-day_id')
 
     q_wusers = twnmodels.WakeTime.all()
-    q_wusers.order('-day_id')
+    q_wusers.filter("day_id >= ", dayid).order('-day_id')
 
-    susers = q_susers.fetch(limit = 280)
-    wusers = q_wusers.fetch(limit = 280)
+    susers = q_susers.fetch(limit = 800)
+    wusers = q_wusers.fetch(limit = 800)
 
     umap = {}
     for u in susers:
@@ -520,6 +587,8 @@ class UserListPage(hbase.PageBase):
       rlist.append((k,v))
 
     rlist.sort(lambda a, b: b[1]-a[1])
+    memcache.set("sorted_userlist_cache", rlist, 300)
+
     return rlist
 
   def get(self):
@@ -542,7 +611,7 @@ class UserListPage(hbase.PageBase):
     else:
       ualist.append("<li>データが作成されていません</li>")
 
-    render_params = {'ualist': "\n".join(ualist), 'typesel':tsitems, 'addclass': addclass}
+    render_params = {'ualist': "\n".join(ualist), 'typesel':tsitems, 'addclass': addclass, 'fixed_link': make_fixed_link(self.request)}
     self.write_page("templates/userlist.html", render_params)
 
 
@@ -561,8 +630,14 @@ class DashboardPage(hbase.PageBase):
       'short_list': short_list,
       'error_class': "",
       'error_message': None,
-      'error_label': "成功"
+      'error_label': "成功",
+      'fixed_link': make_fixed_link(self.request)
     }
+
+    mstats = memcache.get_stats()
+    if mstats:
+      msize = mstats['bytes']
+      params['memcache_size'] = msize if msize<4096 else "%dK" % int((msize+512)/1024)
 
     if stat:
       params['stat_rel_time'] = str(stat.rel_time/10)
@@ -640,7 +715,7 @@ class DashboardPage(hbase.PageBase):
   @classmethod
   def reltime_badge(cls, d):
     if d <= 1800:
-      return u'<span class="interval">30分以内</span>'
+      return u'<span class="interval mostrecent">30分以内</span>'
 
     if d <= 3600:
       return u'<span class="interval">1時間以内</span>'
@@ -669,14 +744,23 @@ class DashboardPage(hbase.PageBase):
 
 class TopPage(hbase.PageBase):
   def get(self):
-    self.write_page("templates/index.html", {})
+    fixed = fixed_page_name(self.request)
+    if fixed:
+      self.redirect("/statuses?nick=%s" % fixed)
+      return
+
+    self.write_cached_page("toppage_html_cache", 0, "templates/index.html", {}, None)
     return
 
 class StatusPage(hbase.PageBase):
   def get(self):
+    if self.block_baidu():
+      return
+
     import botconfig
     import daychart
     import time
+    import re
 #    twnmodels.WakeTime.put_today('gyuque', "Sun Mar 4 23:00:00 +0000 2009")
 
     start_time = time.time()
@@ -712,6 +796,7 @@ class StatusPage(hbase.PageBase):
     loc    = tuser.location if tuser else None
     icon   = tuser.icon     if tuser else None
     bsc    = tuser.bscore   if tuser else None
+    twitter_client = tuser.client if tuser else None
 
     if bsc:
       if (not b_ts) or (not tuser.s_timestamp == b_ts):
@@ -720,10 +805,17 @@ class StatusPage(hbase.PageBase):
     if not loc: # if not set, default 'tokyo'
       loc = 'tokyo'
 
+#    if self.is_iphone():
+#      self.get_touch(nick)
+#      return
+
+    fixed = fixed_page_name(self.request)
+
     ch = daychart.DayChart(loc, time.time() -1000 + 32400 - cur_ofs*86400, 30)
     table_parts = ch.generate_table(record, wk_record)
     table_parts['user_icon'] = icon if icon else '/images/naimage.png'
     table_parts['nick']      = nick
+    table_parts['nick_j']    = re.sub("'", "", nick)
     table_parts['demo']      = demo
     table_parts['gendate']   = jst_datetime()
     table_parts['loc_label'] = twncalendar.LOCATION_DISP_NAMES[loc]
@@ -731,11 +823,17 @@ class StatusPage(hbase.PageBase):
     table_parts['stat_avails']  = stats['avail_count']
     table_parts['stat_avr']   = ('%.3g' % stats['average']) if (stats['average']>=0) else '-'
     table_parts['stat_sdist'] = ('%.3g' % stats['sdist'])   if (stats['sdist']>=0) else '-'
+    table_parts['is_fixed'] = 'true' if fixed==nick else 'false'
+    table_parts['fixed_link'] = '' if (fixed==nick) else make_fixed_link(self.request)
 
     table_parts['stat_bscore'] = str(bsc) if bsc else '-'
     table_parts['pager_html']  = StatusPage.make_pager(cur_ofs, nick)
+    table_parts['client_natsulion'] = twitter_client == 1
 
     self.write_page("templates/statuses.html", table_parts)
+
+  def get_touch(self, nick):
+    self.write_page("templates/i-statuses.html", {'nick': nick})
 
   def make_stats(self, slps, wks):
     import time
@@ -810,7 +908,7 @@ class GetGadgetPage(hbase.PageBase):
       res.out.write('specify nick')
       return
 
-    self.write_page("templates/get_gadget.html", {'nick': nick})
+    self.write_page("templates/get_gadget.html", {'nick': nick, 'fixed_link': make_fixed_link(self.request)})
 
 class GoogleGadgetPage(hbase.PageBase):
   def get(self):
@@ -824,9 +922,34 @@ class GoogleGadgetPage(hbase.PageBase):
     self.write_page("templates/ggadget-base.xml", {'nick': nick}, 'text/xml;charset=UTF-8')
 
 class GadgetPage(hbase.PageBase):
+  @classmethod
+  def make_gadget_cache_key(cls, nick):
+    return "twn_gadget_html_cache__%s" % nick
+
+  @classmethod
+  def clear_gadget_cache(cls, nick):
+    memcache.set(cls.make_gadget_cache_key(nick), None)
+
+  @classmethod
+  def put_gadget_cache(cls, nick, content):
+    memcache.set(cls.make_gadget_cache_key(nick), content)
+
+  def send_cache(self, nick):
+    c = memcache.get(GadgetPage.make_gadget_cache_key(nick))
+    if c:
+      print >>sys.stderr, "gadget cache: %s" % nick
+
+      self.response.out.write(c)
+      return True
+
+    return False
+
   def get(self):
       import time
       nick = self.request.get('nick')
+      if self.send_cache(nick):
+        return
+
       res = self.response
 
       if not nick:
@@ -890,4 +1013,5 @@ class GadgetPage(hbase.PageBase):
           render_params['et10'  ] = int(et_d/10)%10
           render_params['et1'   ] = et_d%10
 
-      self.write_page("templates/gadget.html", render_params)
+      html = self.write_page("templates/gadget.html", render_params, None, True)
+      GadgetPage.put_gadget_cache(nick, html)

@@ -27,6 +27,8 @@ TWITTER_AUTHORIZE_URL     = "http://twitter.com/oauth/authorize"
 TWITTER_REPLIES_URL       = "http://twitter.com/statuses/replies.json"
 TWITTER_UPDATE_URL        = "http://twitter.com/statuses/update.json"
 
+TWITTER_CLIENT_NATSULION  = 1
+
 class TwitterClient(object):
   def __init__(self, okey, osecret):
     self.oKey      = okey
@@ -58,9 +60,15 @@ class TwitterClient(object):
 
   # Twitter API
 
-  def fetch_replies(self):
-    oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.oConsumer, token=self.access_token, http_url=TWITTER_REPLIES_URL)
+  def fetch_replies(self, count = 0):
+    prms = None if count<=20 else {'count': str(count)}
+    oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.oConsumer, token=self.access_token, http_url=TWITTER_REPLIES_URL, parameters=prms)
+
     oauth_request.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(), self.oConsumer, self.access_token)
+
+    if prms:
+      oauth_request.http_url = "%s?count=%d" % (oauth_request.http_url, count)
+
     res = self.send_oauth_request(oauth_request)
 
     return res
@@ -93,6 +101,10 @@ def parse_tweets_json(src):
     tobj.id   = int(t['id'])
     tobj.text = t['text']
     tobj.timestamp = t['created_at']
+
+    if ('source' in t) and ('natsulion' in t['source']):
+      tobj.client = TWITTER_CLIENT_NATSULION
+
     tlist.append(tobj)
 
   return tlist
@@ -145,9 +157,10 @@ class TweetList(object):
     return imap
 
 class Tweet(object):
-  text = None
-  icon = None
-  nick = None
+  text   = None
+  icon   = None
+  nick   = None
+  client = 0
   id        = 0
   timestamp = None
 

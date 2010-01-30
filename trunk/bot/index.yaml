@@ -17,3 +17,18 @@ indexes:
   - name: s_timestamp
   - name: bscore
     direction: desc
+
+- kind: SleepTime
+  properties:
+  - name: day_id
+    direction: desc
+  - name: hour
+    direction: desc
+
+- kind: WakeTime
+  properties:
+  - name: day_id
+    direction: desc
+  - name: hour
+    direction: desc
+
