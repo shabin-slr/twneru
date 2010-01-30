@@ -29,6 +29,7 @@ h1 img {
 	background-color: #fff;
 	border: 1px solid #aaa;
 	z-index: 1002;
+	border-radius: 8px;
 	-moz-border-radius: 8px;
 	-webkit-border-radius: 8px;
 	-moz-box-shadow: 0 2px 5px #000;
@@ -115,6 +116,7 @@ h1 img {
 	border: 1px solid #555;
 	position: absolute;
 	padding: 2px 5px;
+	border-radius: 12px;
 	-moz-border-radius: 12px;
 	-webkit-border-radius: 12px;
 	text-shadow: 0px -1px 1px #333;
@@ -301,6 +303,50 @@ th {
 	font-size: 90%;
 }
 
+.unav img {
+	vertical-align: middle;
+	border: none;
+}
+
+#fix-help {
+	position: absolute;
+	top: 1.9em;
+	left: -140px;
+	display: none;
+	font-size: 12px;
+	background-color: #fff;
+	border: 1px solid #888;
+	width: 340px;
+	-moz-box-shadow: 0 1px 2px #555;
+	-webkit-box-shadow: 0 1px 2px #555;
+	z-index: 100;
+}
+
+#ftip {
+	position: absolute;
+	top: -7px;
+	left: 48%;
+}
+
+span:hover #fix-help {
+	display: block;
+}
+
+#fix-help div {
+	padding: 5px;
+}
+
+#fix-help h3 {
+	text-align: center;
+	margin-top: 0.4em;
+}
+
+em.progress {
+	font-style: normal;
+	background-color: #dfc;
+	color: #000;
+}
+
 .nowind:hover {
 	-moz-opacity: 0.2;
 	opacity: 0.2;
@@ -380,7 +426,7 @@ table.user-info {
 }
 
 #clienticon img {
-	margin-left: -10em;
+	margin-left: -6em;
 }
 
 table.user-info .hrow {display:none;}
