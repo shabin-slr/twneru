@@ -24,6 +24,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 var launched = false;
 var now_canvas = null;
+var fixTool = null;
 var BAR_GRAD;
 var BAR_GRAD2;
 
@@ -39,12 +40,105 @@ function launch()
 		var li = document.getElementById("close-instructions");
 		if (li)
 			setupInstructionsCloser(li);
+		else {
+			setupFixPin()
+		}
 	}
 }
 
 setTimeout(launch, 100);
 setTimeout(launch, 400);
 setTimeout(launch, 1000);
+
+function setupFixPin()
+{
+	if (document.getElementById('fixed-page-navigation')) return;
+
+	var span = fixTool;
+	if (!span) {
+		var n = document.getElementById('main-navigation');
+		if (!n) return;
+		var sep = document.createTextNode(' | ');
+		n.insertBefore(sep, n.firstChild);
+		span = document.createElement('span');
+		span.id = "fix-tool";
+		span.style.position = "relative";
+		n.insertBefore(span, n.firstChild);
+
+		fixTool = span;
+	}
+
+	var a, btnimg;
+	if (!pageFixed) {
+		a = document.createElement('a');
+		a.appendChild(document.createTextNode('このページを固定'));
+		a.href = "javascript:void(setFixPage(true))";
+
+		var btn = document.createElement('a');
+		btnimg = document.createElement('img');
+		btn.href = a.href;
+		btnimg.src = "/images/pagepin.gif";
+		btnimg.alt = "";
+		btnimg.height = "20";
+		btn.appendChild(btnimg);
+
+		span.appendChild(btn);
+		span.appendChild(a);
+
+		var help = document.createElement('div');
+		help.id = 'fix-help';
+		help.innerHTML = '<div><img src="/images/utip.gif" id="ftip" alt="" /><h3>このページはあなたの睡眠記録ですか?</h3>このページが自分の睡眠記録である場合、この固定ツールを利用しましょう。他のページから直接ここにジャンプすることができます。(この設定は Cookie に保存されます)</div>';
+		span.appendChild(help);
+	} else {
+		a = document.createElement('a');
+		a.title = "固定を解除";
+		a.href = "javascript:void(setFixPage(false))";
+
+		btnimg = document.createElement('img');
+		btnimg.src = "/images/pagepinx.gif";
+		btnimg.alt = "";
+		btnimg.height = "20";
+		a.appendChild(btnimg);
+		span.appendChild(a);
+	}
+}
+
+var RX_FXCOOKIE = / *fixedpage *= *([^;])*($|;)/
+function updateFixCookie(b)
+{
+	var c = document.cookie;
+	if (!c)
+		c = "";
+	else
+		c = c.replace(RX_FXCOOKIE, '');
+
+	if (b)
+		document.cookie = 'fixedpage='+b+'; '+c;
+	else
+		document.cookie = 'fixedpage=;'+c;
+}
+
+function setFixPage(b)
+{
+	updateFixCookie(b ? THIS_NICK : null);
+	pageFixed = b;
+
+	if (b)
+		fixTool.innerHTML = '<img alt="" src="/images/pagepin.gif" /><em class="progress">このページを固定しました</em>';
+	else
+		fixTool.innerHTML = '<em class="progress">ページの固定を解除しました</em><img style="opacity:0.6" alt="" src="/images/pagepinx.gif" />';
+
+	var s = fixTool.style;
+	var c1 = function(){s.visibility = "hidden"};
+	var c2 = function(){s.visibility = ""};
+	setTimeout(c1, 1000);
+	setTimeout(c2, 1050);
+	setTimeout(c1, 1100);
+	setTimeout(c2, 1150);
+	setTimeout(c1, 1200);
+
+	setTimeout('fixTool.style.visibility=""; fixTool.innerHTML=""; setupFixPin();', 1600);
+}
 
 function setupInstructionsCloser(li)
 {
