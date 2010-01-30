@@ -82,7 +82,7 @@ class SleepTime(db.Model):
   @classmethod
   def gather_recents(klass):
     a = klass.all()
-    a.order('-day_id')
+    a.order('-day_id').order('-hour')
 
     list = []
     rows = a.fetch(limit = 100)
@@ -142,16 +142,22 @@ class TwitterUser(db.Model):
   icon      = db.StringProperty(required=False)
   bscore    = db.IntegerProperty(required=False)
   s_timestamp = db.IntegerProperty(required=False)
+  client    = db.IntegerProperty(required=False)
 
   @classmethod
-  def set_bscore(klass, nick, s, t):
-    a = TwitterUser.all()
-    a.filter('username =', nick)
+  def set_bscore(klass, nick, s, t, prefetch = None):
     u = None
-    if (a.count() < 1):
-      u = TwitterUser(username = nick)
-    else:
-      u = a.fetch(limit = 1)[0]
+    if prefetch:
+      if nick in prefetch:
+        u = prefetch[nick]
+
+    if not u:
+      a = TwitterUser.all()
+      a.filter('username =', nick)
+      if (a.count() < 1):
+        u = TwitterUser(username = nick)
+      else:
+        u = a.fetch(limit = 1)[0]
 
     u.s_timestamp = int(t)
     u.bscore      = s

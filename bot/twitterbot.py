@@ -93,13 +93,18 @@ class ObserveService(hbase.ServiceBase):
         self.forbidden()
         return
 
+    count = 0
+    count_prm = self.request.get('count')
+    if count_prm and int(count_prm) > 0:
+      count = int(count_prm)
+
     tlist = None
 
     if True:
       c = twitterclient.TwitterClient(botconfig.BotConfig["ConsumerKey"], botconfig.BotConfig["ConsumerSecret"])
       c.set_access_key(botconfig.BotConfig["AccessKey"], botconfig.BotConfig["AccessSecret"])
 
-      r = c.fetch_replies()
+      r = c.fetch_replies(count)
       if int(r.status_code) >= 400:
         memcache.set('observeservice_last_api_error', r.status_code, 0, 0, 'gq.twitterbot')
         self.remote_error(r.status_code, r.content)

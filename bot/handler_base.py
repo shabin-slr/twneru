@@ -20,6 +20,7 @@ import os
 import sys
 from google.appengine.ext             import webapp
 from google.appengine.ext.webapp      import template
+from google.appengine.api             import memcache
 
 class ServiceBase(webapp.RequestHandler):
   def remote_error(self, status, msg):
@@ -36,9 +37,45 @@ class ServiceBase(webapp.RequestHandler):
     return
 
 class PageBase(webapp.RequestHandler):
-  def write_page(self, template_file, params, content_type = None):
+  def block_baidu(self):
+    if self.request.headers:
+      if 'User-Agent' in self.request.headers:
+        if 'Baiduspider' in self.request.headers['User-Agent']:
+          self.response.set_status(402)
+          self.response.out.write("okane kudasai")
+          print >>sys.stderr, "Denied Baiduspider"
+          return True
+
+    return False
+
+  def is_iphone(self):
+    if self.request.headers:
+      if 'User-Agent' in self.request.headers:
+        ua = self.request.headers['User-Agent']
+        if ('(iPhone;' in ua) or ('(iPod;' in ua):
+          return True
+
+    return False
+
+  def write_cached_page(self, cache_name, expire_in, template_file, params, content_type = None):
+    content = memcache.get(cache_name)
+    if content:
+      if content_type:
+        self.response.headers['Content-Type'] = content_type
+
+      self.response.out.write(content)
+      return
+
+    content = self.write_page(template_file, params, content_type, True)
+    memcache.set(cache_name, content, expire_in)
+
+  def write_page(self, template_file, params, content_type = None, ret_html = False):
     path = os.path.join(os.path.dirname(__file__), template_file)
     if content_type:
       self.response.headers['Content-Type'] = content_type
-    self.response.out.write(template.render(path, params))
 
+    html = template.render(path, params)
+    self.response.out.write(html)
+
+    if ret_html:
+      return html

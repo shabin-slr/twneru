@@ -21,5 +21,9 @@ handlers:
   static_files: images/favicon.ico
   upload: images/favicon.ico
 
+- url: /robots\.txt
+  static_files: static/robots.txt
+  upload: static/robots.txt
+
 - url: /.*
   script: twitterbot.py
