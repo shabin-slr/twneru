@@ -6,9 +6,37 @@
 	<title>使いかた - Neru</title>
 	<link rel="stylesheet" href="/css/neru.css" type="text/css" media="screen,tv,print" />
 	<meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+	<script type="text/javascript">
+var launched = false;
+function launch()
+{
+	if (launched) return;
+
+	var t = document.getElementById("main-navigation");
+	if (t) {
+		launched = true;
+		var c = document.cookie;
+		if (c) {
+			if (c.match(/ *fixedpage *= *([^;]*)($|;)/)) {
+				var fx = RegExp['$1'];
+				if (fx.length > 0) {
+					var flink = document.createElement('a');
+					flink.appendChild(document.createTextNode(fx+'の「ねる」'));
+					flink.href = "/statuses?nick="+fx;
+					t.insertBefore(document.createTextNode(' | '), t.firstChild);
+					t.insertBefore(flink, t.firstChild);
+				}
+			}
+		}
+	}
+}
+
+setTimeout(launch, 100);setTimeout(launch, 400);setTimeout(launch, 1000);
+	</script>
 </head>
-<body class="help">
-	<div class="unav"><a href="/dashboard">Dashboard</a></div>
+<body class="help" onload="void(launch())">
+	<div class="unav" id="main-navigation"><a href="/dashboard">Dashboard</a></div>
 	<h1><a href="/"><img alt="ねる。" src="/images/nerulogo.png" /></a></h1>
 	<h2>使いかた</h2>
 	<p><img src="/images/z_1.png" alt="reply to @twneru" align="left" />寝る前に、Twitter で @twneru に「ねる」や「寝る」などと Reply すると、その時刻が就寝時刻として記録されます。記録された就寝時刻はグラフで見ることができます。同様に「起きた」で起床時刻も記録できます。<br /><em><a href="http://twneru.appspot.com/statuses?nick=gyuque">グラフのサンプル</a></em><br /></p>
