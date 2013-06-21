@@ -20,12 +20,13 @@ import sys
 import oauth
 from google.appengine.api import urlfetch
 
-TWITTER_REQUEST_TOKEN_URL = "http://twitter.com/oauth/request_token"
-TWITTER_ACCESS_TOKEN_URL  = "http://twitter.com/oauth/access_token"
-TWITTER_AUTHORIZE_URL     = "http://twitter.com/oauth/authorize"
+TWITTER_REQUEST_TOKEN_URL = "http://api.twitter.com/oauth/request_token"
+TWITTER_ACCESS_TOKEN_URL  = "http://api.twitter.com/oauth/access_token"
+TWITTER_AUTHORIZE_URL     = "http://api.twitter.com/oauth/authorize"
 
-TWITTER_REPLIES_URL       = "http://twitter.com/statuses/replies.json"
-TWITTER_UPDATE_URL        = "http://twitter.com/statuses/update.json"
+#TWITTER_REPLIES_URL       = "http://api.twitter.com/1.1/statuses/replies.json"
+TWITTER_REPLIES_URL       = "http://api.twitter.com/1.1/statuses/mentions_timeline.json"
+TWITTER_UPDATE_URL        = "http://api.twitter.com/1.1/statuses/update.json"
 
 TWITTER_CLIENT_NATSULION  = 1
 
